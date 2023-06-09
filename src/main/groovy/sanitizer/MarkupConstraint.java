@@ -10,6 +10,7 @@ package sanitizer;
  * </p>
  */
 
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.grails.datastore.gorm.validation.constraints.AbstractConstraint;
 import org.springframework.context.MessageSource;
@@ -31,35 +32,19 @@ class MarkupConstraint extends AbstractConstraint {
         return constraintParameter;
     }
 
-//    @java.lang.Override
-//    protected void processValidate(java.lang.Object target, java.lang.Object propertyValue, Errors errors) {
-//        if (!markup) return;
-//
-//        boolean isValid = false;
-//        // Custom validation logic here
-//
-//        if (propertyValue instanceof String) {
-//            isValid = !((String)propertyValue).matches("(?s).*<[^>]+>.*");
-//        } else {
-//            isValid = true;
-//        }
-//        if (!isValid) {
-//            rejectValue(target, errors, "default.invalid.email.message","No bueno", new Object[]{});
-//        }
-//    }
-
     @Override
     protected void processValidate(java.lang.Object target, java.lang.Object propertyValue, Errors errors) {
-        if (!markup) return;
-        MarkupSanitizerResult result = markupSanitizerService.sanitize((String) propertyValue);
+        if (markup && propertyValue instanceof String && StringUtils.hasText((CharSequence) propertyValue)) {
+            MarkupSanitizerResult result = markupSanitizerService.sanitize((String) propertyValue);
 
-        if (result.isInvalid()) {
+            if (result.isInvalid()) {
 
-            String errorMesg = (null != result.getErrorMessages()) ? result.getErrorMessages().toString() : "Invalid Markup entered";
+                String errorMesg = (null != result.getErrorMessages()) ? result.getErrorMessages().toString() : "Invalid Markup entered";
 
-            Object[] args = {constraintPropertyName, constraintOwningClass, propertyValue};
+                Object[] args = {constraintPropertyName, constraintOwningClass, propertyValue};
 
-            rejectValueWithDefaultMessage(target, errors, errorMesg, new String[0], args);
+                rejectValueWithDefaultMessage(target, errors, errorMesg, new String[0], args);
+            }
         }
     }
 

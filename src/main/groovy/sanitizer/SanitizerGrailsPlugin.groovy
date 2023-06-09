@@ -57,16 +57,10 @@ Brief summary/description of the plugin.
 
     }
 
-    void doWithApplicationContext() {
-//        def validator = applicationContext.getBean(ValidatorRegistry)
-//        def markupConstraint = applicationContext.getBean(MarkupConstraint)
-//        ((JavaxValidatorRegistry)validator).addConstraint(markupConstraint.class, [CharSequence])
-
-        def myBean = applicationContext.getBean(DefaultValidatorRegistry)
-        def factory = new ApplicationContextAwareConstraintFactory(
-                applicationContext, MarkupConstraint, ["markupSanitizerService"])
-        ((DefaultValidatorRegistry)myBean).addConstraintFactory(factory)
-
+    void onChange(Map<String, Object> event) {
+        // TODO Implement code that is executed when any artefact that this plugin is
+        // watching is modified and reloaded. The event contains: event.source,
+        // event.application, event.manager, event.ctx, and event.plugin.
     }
 
     void onChange(Map<String, Object> event) {
