@@ -11,41 +11,41 @@ import org.springframework.core.io.ResourceLoader
 
 class SanitizerGrailsPlugin extends Plugin {
 
-    // the version or versions of Grails the plugin is designed for
     def grailsVersion = "5.1.9 > *"
-    // resources that are excluded from plugin packaging
     def pluginExcludes = [
         "grails-app/views/error.gsp"
     ]
-
-    // TODO Fill in these fields
-    def title = "Sanitizer" // Headline display name of the plugin
-    def author = "Your name"
-    def authorEmail = ""
+    def title = "Grails Sanitizer Plugin"
+    def author = "Carlos Tobon"
+    def authorEmail = "jinzo2727@gmail.com"
     def description = '''\
-Brief summary/description of the plugin.
+Plugin for Sanitizing Markup(HTML, XHTML, CSS) using OWASP AntiSamy.
+Filters malicious content from User generated content (such as that entered through Rich Text boxes).
+
+Features -
+* Constraint "markup"
+  - can be added to domain/command classes to validate that a string is valid and safe markup
+  - important note:  The constraint is for validation only, it does not sanitize the string
+* Encoding-only Codec "myText.encodeAsSanitizedMarkup()"
+  - use the codec or the service to sanitize the string
+  - (the codec uses the service, too)
+* MarkupSanitizerService
+  - use the codec or the service to sanitize the string
+  - access in your controllers/services via
+    	def markupSanitizerService
+  - method MarkupSanitizerResult sanitize(String dirtyString)
+  - effectively a singleton, which means the ruleset only needs to be read once on startup
+
+This module does not sanitize a string that does not contain valid markup.  If it does not contain
+valid markup, it will simply return an empty string.
 '''
     def profiles = ['web']
-
-    // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/sanitizer"
-
-    // Extra (optional) plugin metadata
-
-    // License: one of 'APACHE', 'GPL2', 'GPL3'
-//    def license = "APACHE"
-
-    // Details of company behind the plugin (if there is one)
-//    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
-
-    // Any additional developers beyond the author specified above.
-//    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
-
-    // Location of the plugin's issue tracker.
-//    def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
-
-    // Online location of the plugin's browseable source code.
-//    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
+    def documentation = "TBD"
+    def license = "MIT"
+    def developers = [ [ name: "Charles Amat", email: "charlesamat@gmail.com" ],
+                       [ name: "Daniel Bower", email: "daniel@bowerstudios.com" ] ]
+    def issueManagement = [ system: "GitHub Issues", url: "https://github.com/carlosmtobon/grails-5-sanitizer/issues" ]
+    def scm = [ url: "https://github.com/carlosmtobon/grails-5-sanitizer/" ]
 
     Closure doWithSpring() { { ->
         policyFileResource(ClassPathResource, application.config.sanitizer.config?:'does not exist')
