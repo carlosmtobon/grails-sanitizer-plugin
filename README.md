@@ -2,7 +2,7 @@
 The Grails Sanitizer plugin provides a convenient way to sanitize markup (HTML, XHTML, CSS) and protect against Cross-Site Scripting (XSS) attacks using OWASP AntiSamy library.
 # Features
 - Configurable Rulesets in `/src/groovy/antisamyconfigs/antisamy-policy.xml`
-- A custom `markup` constraint that can be added to Domain/Command classes to validate that a string is valid/safe markup.
+- A custom `markup` constraint to validates that a string is valid/safe markup.
 - Encoding-only Codec (e.g., `myText.encodeAsSanitizedMarkup()`)
 - Markup Santizier Service (e.g., `markupSanitizerService.sanitize(input)`)
 # Contributing
