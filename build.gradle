@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.3.4"
+//        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.3.4"
     }
 }
 
@@ -13,13 +13,13 @@ plugins {
 }
 
 
-version "0.1"
-group "sanitizer"
+group "io.github.carlosmtobon"
+version "1.0.0"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
-apply plugin:"asset-pipeline"
+//apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
 
 repositories {
@@ -57,7 +57,7 @@ dependencies {
     implementation "org.grails.plugins:scaffolding"
     implementation "org.grails.plugins:gsp"
     profile "org.grails.profiles:web-plugin"
-    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.3.4"
+//    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.3.4"
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
@@ -104,19 +104,55 @@ bootJar.enabled = false
 
 
 
+/*
 assets {
     packagePlugin = true
 }
+*/
 
 
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'com.deez'
-            artifactId = 'grails-5-sanitizer'
-            version = '0.1'
+            groupId = project.group
+            artifactId = 'grails-sanitizer'
+            version = project.version
 
             from components.java
+
+            pom {
+                name = "Grails Sanitizer"
+                description = "A Grails Plugin for sanitizing markup using the OWASP AntiSamy library."
+                url = "https://github.com/carlosmtobon/grails-5-sanitizer"
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://github.com/carlosmtobon/grails-5-sanitizer/blob/master/LICENSE.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "carlosmtobon"
+                        name = "Carlos Tobon"
+                        email = "jinzo2727@gmail.com"
+                    }
+                    developer {
+                        id = "charlesamat"
+                        name = "Charles Amat"
+                        email = "charlesamat@gmail.com"
+                    }
+                    developer {
+                        id = "danieldbower"
+                        name = "Daniel Bower"
+                        email = "daniel@bowerstudios.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/carlosmtobon/grails-5-sanitizer.git"
+                    developerConnection = "scm:git:ssh://github.com:carlosmtobon/grails-5-sanitizer.git"
+                    url = "https://github.com/carlosmtobon/grails-5-sanitizer/tree/master"
+                }
+            }
         }
     }
 }
