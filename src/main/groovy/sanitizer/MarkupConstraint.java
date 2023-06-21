@@ -15,7 +15,7 @@ import org.springframework.validation.Errors;
 import org.grails.datastore.gorm.validation.constraints.AbstractConstraint;
 import org.springframework.context.MessageSource;
 
-class MarkupConstraint extends AbstractConstraint {
+public class MarkupConstraint extends AbstractConstraint {
 
     MarkupSanitizerService markupSanitizerService;
 

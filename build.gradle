@@ -1,10 +1,12 @@
 buildscript {
     repositories {
         maven { url "https://repo.grails.org/grails/core" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-//        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.3.4"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.3.4"
+        classpath "io.github.gradle-nexus:publish-plugin:1.0.0"
     }
 }
 
@@ -14,7 +16,7 @@ plugins {
 
 
 group "io.github.carlosmtobon"
-version "1.0.0"
+version "1.0.1"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -22,6 +24,7 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-gsp"
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
+apply plugin: "io.github.gradle-nexus.publish-plugin"
 
 repositories {
     maven { url "https://repo.grails.org/grails/core" }
@@ -58,7 +61,7 @@ dependencies {
     implementation "org.grails.plugins:scaffolding"
     implementation "org.grails.plugins:gsp"
     profile "org.grails.profiles:web-plugin"
-//    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.3.4"
+    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.3.4"
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
@@ -103,13 +106,9 @@ tasks.withType(Test) {
 // enable if you wish to package this plugin as a standalone application
 bootJar.enabled = false
 
-
-
-/*
-assets {
-    packagePlugin = true
-}
-*/
+//assets {
+//    packagePlugin = true
+//}
 
 
 publishing {
@@ -120,7 +119,7 @@ publishing {
             version = project.version
 
             from components.java
-            artifact sourcesJar
+//            artifact sourcesJar
             artifact javadocJar
 
             pom {
@@ -161,7 +160,7 @@ publishing {
 }
 
 
-
+//
 sourceSets {
     main {
         resources {
@@ -172,7 +171,7 @@ sourceSets {
 
 ext."signing.keyId" = project.hasProperty("signing.keyId") ? project.getProperty('signing.keyId') : System.getenv('SIGNING_KEY_ID')
 ext."signing.password" = project.hasProperty("signing.password") ? project.getProperty('signing.password') : System.getenv('SIGNING_PASSPHRASE')
-ext."signing.secretKeyRingFile" = project.hasProperty("signing.secretKeyRingFile") ? project.getProperty('signing.secretKeyRingFile') : (System.getenv('SIGNING_PASSPHRASE')?:"${System.properties['user.home']}${File.separator}.gnupg${File.separator}secring.gpg")
+ext."signing.secretKeyRingFile" = project.hasProperty("signing.secretKeyRingFile") ? project.getProperty('signing.secretKeyRingFile') : (System.getenv('SECRING_FILE')?:"${System.properties['user.home']}${File.separator}.gnupg${File.separator}secring.gpg")
 
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
@@ -185,4 +184,19 @@ afterEvaluate {
 
 tasks.withType(Sign) {
     onlyIf { isReleaseVersion }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            def ossUser = System.getenv("SONATYPE_USERNAME") ?: project.hasProperty("sonatypeOssUsername") ? project.sonatypeOssUsername : ''
+            def ossPass = System.getenv("SONATYPE_PASSWORD") ?: project.hasProperty("sonatypeOssPassword") ? project.sonatypeOssPassword : ''
+            def ossStagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID") ?: project.hasProperty("sonatypeOssStagingProfileId") ? project.sonatypeOssStagingProfileId : ''
+            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            username = ossUser
+            password = ossPass
+            stagingProfileId = ossStagingProfileId
+        }
+    }
 }
