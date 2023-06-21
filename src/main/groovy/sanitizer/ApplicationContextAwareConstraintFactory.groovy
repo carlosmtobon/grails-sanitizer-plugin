@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory
 import org.grails.core.exceptions.GrailsDomainException
 import org.grails.datastore.gorm.validation.constraints.factory.ConstraintFactory
 import org.springframework.context.ApplicationContext
+import org.springframework.context.MessageSource
 import org.springframework.util.Assert
 
 /**
@@ -20,6 +21,8 @@ class ApplicationContextAwareConstraintFactory implements ConstraintFactory {
 	private ApplicationContext applicationContext
 	private List<String> beansToInject = []
 
+	final MessageSource messageSource
+
 	/**
 	 * Constructor requires the Application Context containing the beans you would like
 	 * to inject, the Class of the Constraint to create, and a list of strings containing
@@ -31,13 +34,14 @@ class ApplicationContextAwareConstraintFactory implements ConstraintFactory {
 	 * @param beansToInject
 	 */
     ApplicationContextAwareConstraintFactory(ApplicationContext applicationContext,
-                                             Class constraint, List<String> beansToInject) {
+                                             Class constraint, MessageSource messageSource, List<String> beansToInject) {
 		Assert.notNull applicationContext, "Argument [applicationContext] cannot be null"
 		Assert.notNull constraint, "Argument [constraint] cannot be null"
 		Assert.isTrue Constraint.isAssignableFrom(constraint), "Argument [constraint] must be an instance of $Constraint.name"
 
 		this.applicationContext = applicationContext
 		this.constraintClass = constraint
+		this.messageSource = messageSource
 
 		for(String beanName : beansToInject){
 			boolean springContained = applicationContext.containsBean(beanName)
@@ -63,9 +67,9 @@ class ApplicationContextAwareConstraintFactory implements ConstraintFactory {
 	/**
 	 * Create an instance of the Constraint Class for this factory.  Injects dependencies specified by the Factory Constructor
 	 */
-	Constraint newInstance() {
+	Constraint newInstance(Class owner, String property, Object constrainingValue) {
 		try {
-			Constraint instance = constraintClass.newInstance()
+			Constraint instance = constraintClass.newInstance(owner, property, constrainingValue, messageSource)
 
 			if(beansToInject){
 				injectDependencies(applicationContext, instance, beansToInject)
@@ -93,11 +97,11 @@ class ApplicationContextAwareConstraintFactory implements ConstraintFactory {
 
 	@Override
 	boolean supports(Class targetType) {
-		return false
+		return true;
 	}
 
 	@Override
 	Constraint build(Class owner, String property, Object constrainingValue) {
-		return newInstance()
+		return newInstance(owner, property, constrainingValue)
 	}
 }

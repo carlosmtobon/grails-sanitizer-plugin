@@ -17,7 +17,7 @@ class SanitizerGrailsPlugin extends Plugin {
     ]
     def title = "Grails Sanitizer Plugin"
     def author = "Carlos Tobon"
-    def authorEmail = "jinzo2727@gmail.com"
+    def authorEmail = "carlos.mauro.tobon@gmail.com"
     def description = '''\
 Plugin for Sanitizing Markup(HTML, XHTML, CSS) using OWASP AntiSamy.
 Filters malicious content from User generated content (such as that entered through Rich Text boxes).
@@ -63,12 +63,6 @@ valid markup, it will simply return an empty string.
         // event.application, event.manager, event.ctx, and event.plugin.
     }
 
-    void onChange(Map<String, Object> event) {
-        // TODO Implement code that is executed when any artefact that this plugin is
-        // watching is modified and reloaded. The event contains: event.source,
-        // event.application, event.manager, event.ctx, and event.plugin.
-    }
-
     void onConfigChange(Map<String, Object> event) {
         // TODO Implement code that is executed when the project configuration changes.
         // The event is the same as for 'onChange'.
@@ -76,5 +70,14 @@ valid markup, it will simply return an empty string.
 
     void onShutdown(Map<String, Object> event) {
         // TODO Implement code that is executed when the application shuts down (optional)
+    }
+
+    void doWithApplicationContext() {
+
+        def myBean = applicationContext.getBean(ValidatorRegistry)
+        def factory = new ApplicationContextAwareConstraintFactory(
+                applicationContext, MarkupConstraint, applicationContext.messageSource, ["markupSanitizerService"])
+        ((JavaxValidatorRegistry)myBean).addConstraintFactory(factory)
+
     }
 }
