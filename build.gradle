@@ -68,17 +68,6 @@ dependencies {
     testImplementation "org.grails:grails-web-testing-support"
     // from grails-sanitizer
     implementation('org.owasp.antisamy:antisamy:1.7.3')
-    runtimeOnly('net.sourceforge.nekohtml:nekohtml:1.9.22') {
-        exclude group: "xml-apis"
-    }
-    implementation('org.kuali.maven.wagons:maven-s3-wagon:1.2.1') {
-        exclude module: 'slf4j-log4j12'
-    }
-
-    implementation('org.grails.plugins:rest-client-builder:2.1.1') {
-        exclude module: 'slf4j-log4j12'
-    }
-
 }
 
 bootRun {
