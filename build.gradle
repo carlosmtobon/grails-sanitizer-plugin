@@ -19,8 +19,9 @@ version "1.0.0"
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
-//apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 repositories {
     maven { url "https://repo.grails.org/grails/core" }
@@ -115,19 +116,21 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = project.group
-            artifactId = 'grails-sanitizer'
+            artifactId = 'grails-sanitizer-plugin'
             version = project.version
 
             from components.java
+            artifact sourcesJar
+            artifact javadocJar
 
             pom {
                 name = "Grails Sanitizer"
                 description = "A Grails Plugin for sanitizing markup using the OWASP AntiSamy library."
-                url = "https://github.com/carlosmtobon/grails-5-sanitizer"
+                url = "https://github.com/carlosmtobon/grails-sanitizer-plugin"
                 licenses {
                     license {
                         name = "MIT License"
-                        url = "https://github.com/carlosmtobon/grails-5-sanitizer/blob/master/LICENSE.txt"
+                        url = "https://github.com/carlosmtobon/grails-sanitizer-plugin/blob/master/LICENSE.txt"
                     }
                 }
                 developers {
@@ -148,9 +151,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:git://github.com/carlosmtobon/grails-5-sanitizer.git"
-                    developerConnection = "scm:git:ssh://github.com:carlosmtobon/grails-5-sanitizer.git"
-                    url = "https://github.com/carlosmtobon/grails-5-sanitizer/tree/master"
+                    connection = "scm:git:git://github.com/carlosmtobon/grails-sanitizer-plugin.git"
+                    developerConnection = "scm:git:ssh://github.com:carlosmtobon/grails-sanitizer-plugin.git"
+                    url = "https://github.com/carlosmtobon/grails-sanitizer-plugin/tree/master"
                 }
             }
         }
@@ -167,7 +170,19 @@ sourceSets {
     }
 }
 
+ext."signing.keyId" = project.hasProperty("signing.keyId") ? project.getProperty('signing.keyId') : System.getenv('SIGNING_KEY_ID')
+ext."signing.password" = project.hasProperty("signing.password") ? project.getProperty('signing.password') : System.getenv('SIGNING_PASSPHRASE')
+ext."signing.secretKeyRingFile" = project.hasProperty("signing.secretKeyRingFile") ? project.getProperty('signing.secretKeyRingFile') : (System.getenv('SIGNING_PASSPHRASE')?:"${System.properties['user.home']}${File.separator}.gnupg${File.separator}secring.gpg")
 
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-// Specify that the 'jar' task depends on the 'zipPlugin' task
-//jar.dependsOn(zipPlugin)
+afterEvaluate {
+    signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
+        sign publishing.publications.maven
+    }
+}
+
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+}
