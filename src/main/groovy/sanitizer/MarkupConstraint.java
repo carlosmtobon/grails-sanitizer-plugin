@@ -20,11 +20,15 @@ class MarkupConstraint extends AbstractConstraint {
     MarkupSanitizerService markupSanitizerService;
 
     public static final String MARKUP_CONSTRAINT = "markup";
-    private final boolean markup;
+    private boolean markup;
 
     public MarkupConstraint(Class<?> constraintOwningClass, String constraintPropertyName, Object constraintParameter, MessageSource messageSource) {
         super(constraintOwningClass, constraintPropertyName, constraintParameter, messageSource);
         this.markup = (boolean) this.constraintParameter;
+    }
+
+    public void setMarkup(boolean markup) {
+        this.markup = markup;
     }
 
     @Override

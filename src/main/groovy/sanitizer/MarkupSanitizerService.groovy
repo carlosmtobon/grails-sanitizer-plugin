@@ -55,7 +55,6 @@ class MarkupSanitizerService {
 			outputStream.close();
 
 			// Done! The XML file from the JAR is now available as a File object
-			System.out.println("XML file path: " + tempFile.getAbsolutePath());
 			log.info('Initializing sanitizer.MarkupSanitizerService with ' + selectedPolicyFile.filename)
 
 			policy = Policy.getInstance(tempFile)
