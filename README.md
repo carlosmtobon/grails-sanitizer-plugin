@@ -3,7 +3,7 @@ A Grails Plugin for sanitizing markup using the OWASP AntiSamy library.
 # Installation
 To use the Grails Sanitizer Plugin, add the following dependency to your `build.gradle` file:
 ```groovy
-implementation 'org.grails.plugins:sanitizer:1.0.0'
+implementation 'io.github.carlosmtobon:grails-sanitizer-plugin:1.0.1'
 ```
 # Features
 The Grails Sanitizer plugin provides a convenient way to sanitize markup (HTML, XHTML, CSS) and protect against Cross-Site Scripting (XSS) attacks using OWASP AntiSamy library.
